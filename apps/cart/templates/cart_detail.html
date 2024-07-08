@@ -17,20 +17,22 @@
                     </thead>
                     <tbody>
                         {% for item in cart %}
+                             {% with product=item.product %}
                                 <tr>
                                     <td>{{ item.title }}</td>
                                     <td>{{ item.quantity }}
-                                        <button @click="deIncrementQuantity({{item.product.id}},{{ item.quantity }},'+')"> +</button>
-                                        <button @click="deIncrementQuantity({{item.product.id}},{{ item.quantity }},'-')"> -</button>
+                                        <button @click="deIncrementQuantity({{product.id}},{{ item.quantity }},'+')"> +</button>
+                                        <button @click="deIncrementQuantity({{product.id}},{{ item.quantity }},'-')"> -</button>
                                     </td>
                                     <td>{{ item.total_price }}</td>
-                                    <td><button @click="remove_from_cart({{item.product.id}})">Remove</button></td>
+                                    <td><button @click="remove_from_cart({{product.id}})">Remove</button></td>
                                 </tr>
+                            {% endwith %}
                         {% endfor %}
                     </tbody>
                 </table>
             </div>
-
+{{productsstring | safe }}
         {% else %}
             <p>Your cart is empty.</p>
         {% endif %}
@@ -41,13 +43,15 @@
 <script>
     var cartapp = new Vue({
         el: '#cartapp',
-        delimiters: ['{[[}', ']]'],
+        delimiters: ['[[', ']]'],
         data() {
             return {
+                products: {{productsstring.products|safe}}
             }
         },
         mounted() {
             console.log("mounted ---- ");
+            console.log("products ---- ",this.products);
         },
         methods: {
             deIncrementQuantity(product_id,quantity,operand) {
