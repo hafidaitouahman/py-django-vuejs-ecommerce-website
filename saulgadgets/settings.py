@@ -34,6 +34,12 @@ environ.Env.read_env(root_path('.env'))
 
 ALLOWED_HOSTS = []
 
+# Cart settings
+CART_SESSION_ID ='shopping_cart'
+CART_SESSION_EXPIRATION_DAYS = 7    # 7 days
+SESSION_COOKIE_SECURE = False
+CART_SESSION_COOKIE_AGE = 86400  # 1 day
+
 
 # Application definition
 

@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 {% load static %}
 
 <html>
@@ -8,6 +9,8 @@
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
 		<link rel="stylesheet" href="{% static 'main.css' %}">
 		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
+
 	</head>
 
 	<body>
@@ -29,7 +32,7 @@
 					{% endfor %}	
                 </div>
 				<div class="navbar-item">
-					<a href="{% url 'cartview' %}" class="button is-primary" >Cart</a>
+					<a href="{% url 'cart_detail' %}" class="button is-primary" >Cart</a>
 				</div>
             </div>
 		</nav>
@@ -54,43 +57,7 @@
 
 		<script src="https://unpkg.com/vuex@3.5.1/dist/vuex.js"></script>
 		<script>
-			var store = new Vuex.Store({
-				state: {
-					numItems: {{ cart.get_total_length }},
-					totalCost: {{ cart.get_total_cost }}
-				},
-				mutations: {
-					increment(state, quantity) {
-						state.numItems += quantity;
-					},
-					changeTotalCost(state, newCost) {
-						state.totalCost += newCost
-					}
-				}
-			});
 
-			var navbarapp = new Vue({
-				el: '#navbarapp',
-				delimiters: ['[[', ']]'],
-				store: store,
-				data () {
-					return {
-						menuClass: false
-					}
-				},
-				computed: {
-					numItems: function() {
-						return store.state.numItems
-					}
-				},
-				methods: {
-					toggleMenu() {
-						console.log('toggleMenu');
-
-						this.menuClass = !this.menuClass;
-					}
-				}
-			});
 		</script>
 
 		{% block scripts %}

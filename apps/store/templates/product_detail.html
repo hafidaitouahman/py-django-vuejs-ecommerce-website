@@ -1,9 +1,65 @@
 {% extends 'base.html' %}
 {% block content %}
+<div id="productapp">
     <h1 class='title'> {{ product.title }}</h1>
     <h1 class='subtitle'> {{ product.price }}</h1>
 
     {% if product.description %}
-        <p> {{ product.description }}</p>
+    <p> {{ product.description }}</p>
     {% endif %}
+    <button @click="addToCart({{ product.id}})">Add to cart</button>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+    var productapp = new Vue({
+        el: '#productapp',
+        delimiters: ['[[', ']]'],
+        data() {
+            return {
+            }
+        },
+        mounted() {
+            console.log("mounted ---- ");
+        },
+        methods: {
+            addToCart(product_id) {
+                console.log("add to cart");
+                var data = {
+                        'product_id': product_id,
+                        'update':false,
+                        'quantity': 1};
+                fetch('/api/add_to_cart/',{
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',
+                        },
+                    credentials:'same-origin',
+                    body: JSON.stringify(data)
+                    })
+                    .then((response) => {
+                                        if(response.error){
+                                            console.log('error 1');
+                                            throw result;
+                                        }
+                                        return response;
+                                        }
+
+                        )
+                        .then((result) => {
+                            if(result){
+                                    console.log('Added to cart');
+                                }
+                        })
+                        .catch(function(error) {
+                            console.log('error 2');
+                            console.error('Error:', error);
+                        });
+                }
+            }
+        });
+</script>
 {% endblock %}
