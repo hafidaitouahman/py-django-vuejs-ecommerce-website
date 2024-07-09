@@ -31,8 +31,8 @@
 						<a href="{% url 'category_detail' category.slug%}" class="navbar-item">{{category.title}}</a>
 					{% endfor %}	
                 </div>
-				<div class="navbar-item">
-					<a href="{% url 'cart_detail' %}" class="button is-primary" >Cart</a>
+				<div class="navbar-item" id="cartnavbarapp">
+					<a href="{% url 'cart_detail' %}" class="button is-primary" >Cart ([[numItems]])</a>
 				</div>
             </div>
 		</nav>
@@ -55,9 +55,39 @@
 			</div>
 		</footer>
 
-		<script src="https://unpkg.com/vuex@3.5.1/dist/vuex.js"></script>
+		<!--<script src="https://unpkg.com/vuex@3.5.1/dist/vuex.js"></script>-->
+		<!--<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>-->
+		<script src="https://unpkg.com/vuex@4.0.0/dist/vuex.global.js"></script>
 		<script>
+			const store = new Vuex.Store({
+			    state: {
+			    	numItems: {{cart.get_total_length}}
+			    	},
+			    mutations: {
+						increment(state,quantity) {
+							state.numItems+= parseInt(quantity)
+						},
+						decrement(state,quantity) {
+							state.numItems-= parseInt(quantity)
+						}
+                    },
+                actions: {
+                    increment: ({ commit }) => commit('increment'),
+                    decrement: ({ commit }) => commit('decrement')
+                    }
+			    })
 
+
+			var cartnavbarapp = new Vue({
+			    el: '#cartnavbarapp',
+			    delimiters: ['[[', ']]'],
+			    store: store,
+                computed: {
+						numItems: function() {
+							return store.state.numItems
+						}
+				}
+			})
 		</script>
 
 		{% block scripts %}

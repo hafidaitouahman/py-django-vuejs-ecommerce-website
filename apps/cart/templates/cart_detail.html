@@ -10,29 +10,29 @@
                     <thead>
                         <tr>
                             <th>Product</th>
-                            <th>Quantity</th>
                             <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total Price</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for item in cart %}
-                             {% with product=item.product %}
-                                <tr>
-                                    <td>{{ item.title }}</td>
-                                    <td>{{ item.quantity }}
-                                        <button @click="deIncrementQuantity({{product.id}},{{ item.quantity }},'+')"> +</button>
-                                        <button @click="deIncrementQuantity({{product.id}},{{ item.quantity }},'-')"> -</button>
+
+                                <tr v-for="product in products">
+                                    <td>[[ product.title ]]</td>
+                                    <td>[[ product.price ]]</td>
+                                    <td>[[ product.quantity ]]
+                                        <button @click="deIncrementQuantity(product.id,product.quantity,'+')"> +</button>
+                                        <button @click="deIncrementQuantity(product.id,product.quantity,'-')"> -</button>
                                     </td>
-                                    <td>{{ item.total_price }}</td>
-                                    <td><button @click="remove_from_cart({{product.id}})">Remove</button></td>
+                                        <td>[[ product.total_price ]]</td>
+                                    <td><button @click="remove_from_cart(product.id)">Remove</button></td>
                                 </tr>
-                            {% endwith %}
-                        {% endfor %}
+
                     </tbody>
                 </table>
             </div>
-{{productsstring | safe }}
+
         {% else %}
             <p>Your cart is empty.</p>
         {% endif %}
@@ -45,21 +45,30 @@
         el: '#cartapp',
         delimiters: ['[[', ']]'],
         data() {
+
+
             return {
-                products: {{productsstring.products|safe}}
+                products: [{{productsstring|safe}}],
+                total_quantity:[{{total_quantity|safe}}],
+                total_price:[{{total_price|safe}}],
+
             }
         },
+        store: store,
         mounted() {
             console.log("mounted ---- ");
             console.log("products ---- ",this.products);
+
         },
         methods: {
             deIncrementQuantity(product_id,quantity,operand) {
-                operand ==='+' ? quantity +=1 : quantity -=1;
+                quantity = parseInt(quantity);
+                operand ==='+' ? quantity+=1 : quantity-=1;
+                operand ==='+' ? store.commit('increment',1) : store.commit('decrement',1)
                 console.log("incrementQantity :: " + product_id + " quantity: " + quantity);
                 var data = {
                         'product_id': product_id,
-                        'quantity':quantity,
+                        'quantity': quantity,
                         'update':true
                         };
                  fetch('/api/add_to_cart/',{
@@ -75,6 +84,14 @@
                                         if(response.error){
                                             console.log('error 1');
                                             throw result;
+                                        }
+                                        for(var i=0;i < this.products.length;i++){
+                                            product =  this.products[i];
+                                            if(product.id === product_id){
+                                                product.quantity = quantity;
+                                                product.total_price = product.quantity * product.price
+                                                break;
+                                            }
                                         }
                                         return response;
                                         }
@@ -93,7 +110,7 @@
             remove_from_cart(product_id) {
                 console.log("remove from cart");
                 var data = {
-                        'product_id': product_id
+                        'product_id': product_id.toString()
                         };
                 fetch('/api/remove_from_cart/',{
                     method: 'POST',
@@ -105,18 +122,15 @@
                     body: JSON.stringify(data)
                     })
                     .then((response) => {
-                                        if(response.error){
-                                            console.log('error 1');
-                                            throw result;
-                                        }
-
-                                        return response;
-                                        }
-
-                        )
+                                  console.log("response::::",product_id);
+                                  console.log("this.products before filer:::",this.products);
+                                  this.products = this.products.filter(product => product.id !== product_id)
+                                  console.log("this.products after filter:::",this.products);
+                        })
                         .then((result) => {
                             if(result){
-                                    console.log('remove from cart',result);
+                                    console.log('remove from cart::',result);
+
                                 }
                         })
                         .catch(function(error) {

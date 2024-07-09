@@ -48,6 +48,7 @@ class Cart(object):
         else:
             self.cart[product_id]['quantity'] += quantity  # add the quantity if update_quantity is False (default)
         self.save()
+        print("cart after save cart ::  ", self.cart)
 
     def remove(self, product_id):
         print('removing product from cart..')
@@ -69,3 +70,6 @@ class Cart(object):
             settings.CART_SESSION_COOKIE_AGE) or 0  # update the session expiration time
         self.session.save()  # save the session
         return self.cart
+
+    def get_total_length(self):
+        return sum(int(item['quantity']) for item in self.cart.values())

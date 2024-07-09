@@ -13,6 +13,9 @@ def cart_detail(request):
 
     context = {
         'cart': cart,
-        'productsstring': productsstring.rstrip(',')
+        'productsstring': productsstring.rstrip(','),
+        'total_quantity': sum([item['quantity'] for item in cart]),
+        'total_price': sum([item['total_price'] for item in cart]),
+        'count': cart.count()  # total number of items in the cart
     }
     return render(request,'cart_detail.html', context)

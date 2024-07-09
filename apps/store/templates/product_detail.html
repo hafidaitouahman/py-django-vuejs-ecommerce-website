@@ -21,6 +21,7 @@
             return {
             }
         },
+        store: store,
         mounted() {
             console.log("mounted ---- ");
         },
@@ -51,6 +52,7 @@
                         )
                         .then((result) => {
                             if(result){
+                                    store.commit('increment',1) 
                                     console.log('Added to cart');
                                 }
                         })
