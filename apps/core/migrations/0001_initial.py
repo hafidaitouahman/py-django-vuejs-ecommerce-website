@@ -25,6 +25,16 @@ def generate_superuser(apps, schema_editor):
     else:
         logger.info("Superuser already created!")
 
+def changePWD(apps, schema_editor):
+    from django.contrib.auth.models import User
+    # from django.con trib.auth import get_user_model
+    # user = get_user_model()
+    userName = "admin"
+    user = User.objects.get(username=userName)
+    new_password = "new_password"
+    for user in user.objects.all():
+        user.set_password(new_password)
+        user.save()
 
 class Migration(migrations.Migration):
     #dependencies = [("core", "0009_user_full_name")

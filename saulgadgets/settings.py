@@ -28,7 +28,17 @@ SECRET_KEY = 'django-insecure-&_pcxw7qwh#0k5k4$gg3r4gq(#3849r7tt)gi3n35%vylx-@t6
 DEBUG = True
 root_path = environ.Path(__file__) - 2
 print("root_path  ::::" + str(root_path)  )
-BASE_DIR = root_path
+#BASE_DIR = root_path
+
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+
+# Application definition
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media').replace('\\', '/')
+#MEDIA_URL = '/media/'
+MEDIA_URL = 'http://localhost:8000/static/media/'
+
+print("BASE_DIR=root_path",BASE_DIR)
 env = environ.Env() # set default    values and casting DEBUG=(bool, False), DJANGO_ENV=(str, 'dev')
 environ.Env.read_env(root_path('.env')) 
 
@@ -48,6 +58,7 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'apps.core',
@@ -67,6 +78,9 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'saulgadgets.urls'
 
+TEMPLATE_DEBUG = True
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -78,7 +92,10 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'apps.store.context_processors.menu_categories'
+                'apps.store.context_processors.menu_categories',
+                'apps.core.context_processors.product_media',
+                'apps.store.context_processors.product_media',
+
             ],
         },
     },
@@ -93,6 +110,14 @@ WSGI_APPLICATION = 'saulgadgets.wsgi.application'
 DATABASES = {
     # To access to db shell : ./manage.py dbshell
     'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'saulgadget-pgdb',
+            'USER': 'postgres',
+            'PASSWORD': 'root2023',
+            'HOST': '127.0.0.1',
+            'PORT': '5432'
+        },
+    'default_mysql': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'saulgadget_db',
         'USER': 'root', 
@@ -151,6 +176,23 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'apps/core/static'),
+    os.path.join(BASE_DIR, 'apps/store/static'),
+    os.path.join(BASE_DIR, 'apps/cart/static'),
+    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'products/'),
+    os.path.join(BASE_DIR, 'products/thumbnails/'),
+]
+CORS_ALLOW_ALL_ORIGINS = True
+#MEDIA_ROOT = os.path.join(BASE_DIR,'media\\')
+print("MEDIA_URL  ::::" + str(MEDIA_URL)  )
+
+MEDIA_DIR = os.path.join(BASE_DIR,'media/products/thumbnails')
+#PRODUCT_MEDIA_DIR = os.path.join(MEDIA_ROOT,'products/')
+print("BASE_DIR  ::::" + str(BASE_DIR))
+print("MEDIA_ROOT  ::::" + str(MEDIA_ROOT)  )
+print("MEDIA_DIR  ::::" + str(MEDIA_DIR))
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
